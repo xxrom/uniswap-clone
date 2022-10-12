@@ -1,10 +1,11 @@
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { AiOutlineArrowDown } from "react-icons/ai";
 import { DiAptana } from "react-icons/di";
 import { GrCloudlinux, GrDropbox } from "react-icons/gr";
-import { IconType } from "react-icons";
+import { IconButton } from ".";
+
 export interface HeaderProps {}
 
 const style = {
@@ -85,39 +86,3 @@ export const Header = memo(({}: HeaderProps) => {
     </div>
   );
 });
-
-// Button with Icons
-const styleButton = {
-  buttonIconContainer: "flex items-center",
-  buttonTitleContainer: "m-2",
-  button: `flex items-center bg-[#191B1F] rounded-2xl mx-2`,
-  buttonPadding: `p-2`,
-  accent: `text-blue-500 font-bold border border-[#163256] bg-[#172A42] rounded-2xl h-full`,
-};
-
-const IconButton = ({
-  title,
-  IconStart,
-  IconEnd,
-  type,
-}: {
-  title?: string;
-  IconStart?: IconType;
-  IconEnd?: IconType;
-  type?: "accent";
-}) => (
-  <div
-    className={`${styleButton.button} ${
-      type === "accent" && styleButton.accent
-    } ${styleButton.buttonPadding}`}
-  >
-    <div className={`${styleButton.buttonIconContainer}`}>
-      {IconStart && <IconStart />}
-      {title && (
-        <div className={styleButton.buttonTitleContainer}>{`${title}`}</div>
-      )}
-
-      {IconEnd && <IconEnd />}
-    </div>
-  </div>
-);
