@@ -1,16 +1,23 @@
 import React, {
   useState,
-  createContext,
   useEffect,
   ReactElement,
   useContext,
+  createContext,
 } from "react";
 
+export type Eth = Window.ethereum | undefined;
 export type TransactionContext = {
   currentAccount: string | null;
-  connectWallet: (eth: Window.ethereum) => Promise<any>;
+  connectWallet: (eth: Eth) => Promise<any>;
 };
-export const TransactionContext = createContext<TransactionContext>({});
+
+const initContext: TransactionContext = {
+  currentAccount: null,
+  connectWallet: () => new Promise(() => {}),
+};
+
+const TransactionContext = createContext(initContext);
 
 export const TransactionProvider = ({
   children,
@@ -19,20 +26,22 @@ export const TransactionProvider = ({
 }) => {
   const [currentAccount, setCurrentAccount] =
     useState<TransactionContext["currentAccount"]>(null);
-  const [eth, setEth] = useState<Window.ethereum | null>();
-  console.log(eth, currentAccount);
 
+  const eth: Eth = typeof window !== "undefined" ? window?.ethereum : undefined;
+
+  // TODO: is it fine to try only once to connect to wallet ?
   useEffect(() => {
-    console.log("useEffect", window.ethereum);
-    if (typeof window !== "undefiend") {
-      setEth(window?.ethereum);
+    console.log("useEffect", eth);
+
+    if (typeof window === "object") {
+      checkIfWalletIsConnected();
     }
   }, []);
 
   const connectWallet = async (metamask = eth) => {
     try {
       if (!metamask) {
-        return alert("Please install metamask");
+        return alert("Please install metamask (connectWallet)");
       }
 
       const accounts = await metamask.request({
@@ -40,8 +49,8 @@ export const TransactionProvider = ({
       });
       console.log("accoutns", accounts);
       setCurrentAccount(accounts[0]);
-    } catch (err) {
-      if (err.code === 4001) {
+    } catch (err: { code?: number }) {
+      if (err?.code === 4001) {
         // EIP-1193 userRejectedRequest error
         // If this happens, the user rejected the connection request.
         console.log("Please connect to MetaMask.");
@@ -49,6 +58,23 @@ export const TransactionProvider = ({
         console.error(err);
         throw new Error("No ethereum object (eth_requestAccounts)");
       }
+    }
+  };
+
+  const checkIfWalletIsConnected = async (metamask = eth) => {
+    try {
+      if (!metamask) {
+        return alert("Please install metamask (checkIfWalletIsConnected)");
+      }
+
+      const accounts = await metamask.request({ method: "eth_accounts" });
+
+      if (accounts?.length) {
+        setCurrentAccount(accounts[0]);
+      }
+    } catch (err) {
+      console.error(err);
+      throw new Error("no ethereum object (eth_accounts)");
     }
   };
 
