@@ -6,6 +6,19 @@ import React, {
   createContext,
 } from "react";
 
+/*
+ * TODO: is it fine to try only once to connect to wallet,
+ * with window check only once ?
+ *
+ * ANS: yes, it is fine, useEffect will run only in browser,
+ * on server it will be skipped
+ * ANS2: typeof window !== 'undefined'
+ * ANS3: dynamic import 'next/dynamic' with {ssr: false},
+ * so loading will be skipped too
+ *
+ * URL: https://dev.to/vvo/how-to-solve-window-is-not-defined-errors-in-react-and-next-js-5f97
+ */
+
 export type Eth = Window.ethereum | undefined;
 export type TransactionContext = {
   currentAccount: string | null;
@@ -29,7 +42,6 @@ export const TransactionProvider = ({
 
   const eth: Eth = typeof window !== "undefined" ? window?.ethereum : undefined;
 
-  // TODO: is it fine to try only once to connect to wallet ?
   useEffect(() => {
     console.log("useEffect", eth);
 
