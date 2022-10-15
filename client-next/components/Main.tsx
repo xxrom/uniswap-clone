@@ -1,11 +1,10 @@
 import React, { memo, useCallback, useState } from "react";
 
-import { HiOutlineDotsVertical } from "react-icons/hi";
 import { AiOutlineArrowDown } from "react-icons/ai";
-import { DiAptana } from "react-icons/di";
 import { RiSettings3Fill } from "react-icons/ri";
-import { GrCloudlinux, GrDropbox } from "react-icons/gr";
-import { IconType } from "react-icons";
+import { GrDropbox } from "react-icons/gr";
+import { useTransaction } from "../context/TransactionContext";
+
 export interface MainProps {}
 
 const style = {
@@ -24,6 +23,7 @@ const style = {
 
 export const Main = memo(({}: MainProps) => {
   const handleChange = (e, t) => {};
+  const { currentAccount } = useTransaction();
 
   const onChangeAmount = useCallback(
     (e: InputEvent) => handleChange(e, "amount"),

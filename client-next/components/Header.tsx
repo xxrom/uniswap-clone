@@ -5,6 +5,7 @@ import { AiOutlineArrowDown } from "react-icons/ai";
 import { DiAptana } from "react-icons/di";
 import { GrCloudlinux, GrDropbox } from "react-icons/gr";
 import { IconButton } from ".";
+import { useTransaction } from "../context/TransactionContext";
 
 export interface HeaderProps {}
 
@@ -21,7 +22,8 @@ const style = {
 export const Header = memo(({}: HeaderProps) => {
   // Top current tab
   const [selectedNav, setSelectedNav] = useState("swap");
-  const [isConnected] = useState(true);
+  const { currentAccount, connectWallet } = useTransaction();
+  const isConnected = typeof currentAccount === "string";
 
   const onTabClick = useCallback(
     (newTab: string) => () => setSelectedNav(newTab),
@@ -42,6 +44,12 @@ export const Header = memo(({}: HeaderProps) => {
     ),
     [getTabStyle, onTabClick]
   );
+
+  const onConnectWaller = useCallback(async () => {
+    await connectWallet().then((ans: any) => {
+      console.log("res after connectWallet", ans);
+    });
+  }, [connectWallet]);
 
   return (
     <div className={style.wrapper}>
@@ -76,9 +84,13 @@ export const Header = memo(({}: HeaderProps) => {
         />
 
         {isConnected ? (
-          <IconButton title="0x00..234" />
+          <IconButton title={`${currentAccount?.slice(0, 7)}...`} />
         ) : (
-          <IconButton type="accent" title="Connect Wallet" />
+          <IconButton
+            type="accent"
+            title="Connect Wallet"
+            onClick={onConnectWaller}
+          />
         )}
 
         <IconButton IconStart={HiOutlineDotsVertical} />

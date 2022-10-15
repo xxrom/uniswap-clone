@@ -25,6 +25,7 @@ export interface IIconButton {
    * Accent for button (more noticeble)
    */
   type?: "accent";
+  onClick?: (obj: any) => void;
 }
 
 export const IconButton = ({
@@ -32,8 +33,10 @@ export const IconButton = ({
   IconStart,
   IconEnd,
   type,
+  onClick,
 }: IIconButton) => (
   <div
+    onClick={onClick}
     className={`${style.button} ${type === "accent" && style.accent} ${
       style.buttonPadding
     }`}
