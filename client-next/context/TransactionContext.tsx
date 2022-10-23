@@ -19,10 +19,10 @@ import React, {
  * URL: https://dev.to/vvo/how-to-solve-window-is-not-defined-errors-in-react-and-next-js-5f97
  */
 
-export type Eth = Window.ethereum | undefined;
+export type Eth = Window["ethereum"] | undefined;
 export type TransactionContext = {
   currentAccount: string | null;
-  connectWallet: (eth: Eth) => Promise<any>;
+  connectWallet: (eth?: Eth) => Promise<any>;
 };
 
 const initContext: TransactionContext = {
@@ -76,6 +76,10 @@ export const TransactionProvider = ({
   const checkIfWalletIsConnected = async (metamask = eth) => {
     try {
       if (!metamask) {
+        /*
+         * If user didn't have metasmask, then he doesn't have
+         * window.ethereum, then he has to install plugin MetaMask
+         */
         return alert("Please install metamask (checkIfWalletIsConnected)");
       }
 
@@ -83,6 +87,7 @@ export const TransactionProvider = ({
 
       if (accounts?.length) {
         setCurrentAccount(accounts[0]);
+        console.log("wallet is already connected!");
       }
     } catch (err) {
       console.error(err);
