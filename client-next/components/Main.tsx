@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { ChangeEvent, memo, useCallback, useState } from "react";
 
 import { AiOutlineArrowDown } from "react-icons/ai";
 import { RiSettings3Fill } from "react-icons/ri";
@@ -21,19 +21,36 @@ const style = {
   confirmButton: `bg-[#2172e5] my-2 rounded-2xl py-6 px-8 text-2xl font-bold flex items-center justify-center cursor-pointer`,
 };
 
+export type InputChangeEvent = ChangeEvent<HTMLInputElement>;
+
 export const Main = memo(({}: MainProps) => {
-  const handleChange = (e, t) => {};
-  const { currentAccount } = useTransaction();
+  const { currentAccount, formData, handleFormChange, sendTransaction } =
+    useTransaction();
 
   const onChangeAmount = useCallback(
-    (e: InputEvent) => handleChange(e, "amount"),
-    []
+    (e: InputChangeEvent) => handleFormChange(e, "amount"),
+    [handleFormChange]
   );
   const onChangeAddress = useCallback(
-    (e: InputEvent) => handleChange(e, "addressTo"),
-    []
+    (e: InputChangeEvent) => handleFormChange(e, "addressTo"),
+    [handleFormChange]
   );
-  const onSubmit = useCallback(() => {}, []);
+  const onSubmit = useCallback(
+    async (e: InputChangeEvent) => {
+      const { addressTo, amount } = formData;
+
+      // Disabling default thing (a form submission is to refresh the page)
+      //e.preventDefault();
+
+      if (!addressTo || !amount) {
+        console.log("Do not have addressTo or amount");
+        return;
+      }
+
+      sendTransaction();
+    },
+    [formData, sendTransaction]
+  );
 
   return (
     <div className={style.wrapper}>

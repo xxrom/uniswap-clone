@@ -84,7 +84,11 @@ export const Header = memo(({}: HeaderProps) => {
         />
 
         {isConnected ? (
-          <IconButton title={`${currentAccount?.slice(0, 7)}...`} />
+          <IconButton
+            title={`${currentAccount?.slice(0, 7)}...${currentAccount?.slice(
+              35
+            )}`}
+          />
         ) : (
           <IconButton
             type="accent"

@@ -16,10 +16,10 @@ contract Transactions {
    */
 
   function publishTransaction(
-    address payable receiver,
-    uint256 amount,
-    string memory message,
-    string memory keyword
+    address payable receiver, // Wallet address where to send
+    uint256 amount, // Amount
+    string memory message, // `Transferring from to`
+    string memory keyword // keyword 'TRANSFER'
   ) public {
     emit Transfer(
       msg.sender,
