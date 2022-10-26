@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { contractABI, contractAddress } from "../lib/constants";
 import { ethers } from "ethers";
+import { client } from "../lib/sanityClient";
 
 const eth: Eth = typeof window !== "undefined" ? window?.ethereum : undefined;
 
@@ -162,7 +163,7 @@ export const TransactionProvider = ({
       });
 
       // We already waiting hash ??? or we waiting to publish transaction ??
-      const transactionHash = await transactionContract.publishTransaction(
+      const transactionHash = await transactionContract?.publishTransaction(
         addressTo, // to wallet address
         parsedAmount, // amount
         `Transferring ETH ${parsedAmount} to ${addressTo}`, // message
@@ -174,13 +175,13 @@ export const TransactionProvider = ({
       // Waiting Hash to return
       await transactionHash.wait();
 
-      // Saving transaction to the DB
-      //await saveTransaction(
-      //transactionHash.hash,
-      //amount,
-      //connectedAccount,
-      //addressTo
-      //);
+      // Saving transaction to the Sanity DB
+      await saveTransaction(
+        transactionHash.hash,
+        amount,
+        connectedAccount,
+        addressTo
+      );
 
       setIsLoading(false);
     } catch (error) {
@@ -188,11 +189,67 @@ export const TransactionProvider = ({
     }
   };
 
-  const handleFormChange = (e: React.InputHTMLAttributes, name: string) => {
+  const handleFormChange = (
+    e: React.SyntheticEvent & { target: { value: string } },
+    name: string
+  ) => {
     setFormData((prevState) => ({
       ...prevState,
       [name]: e?.target?.value,
     }));
+  };
+
+  // Save transaction info to Sanity (it's faster then getting from blockchain)
+  const saveTransaction = async (
+    // Transaction Hash
+    txHash: string,
+    amount: string,
+    fromAddress = currentAccount,
+    toAddress: string
+  ) => {
+    if (!fromAddress) {
+      // return if we don't have currentAccount
+      return;
+    }
+
+    // Transaction document
+    const txDoc = {
+      _type: "transactions",
+      _id: txHash,
+      fromAddress,
+      toAddress,
+      timestamp: new Date(Date.now()).toISOString(),
+      txHash,
+      amount: parseFloat(amount),
+    };
+
+    /*
+     * Create new document in Sanity if needed
+     * client from ./lib/sanityClient file
+     */
+    await client.createIfNotExists(txDoc);
+
+    /*
+     * Connect transactions with current user account (currentAccount)
+     * so we can see all transactions for each user
+     */
+    await client
+      .patch(fromAddress)
+      .setIfMissing({ transactions: [] }) // first init array with Transactions
+      .insert(
+        "after",
+        "transactions[-1]", // append to array of Transactions
+        [
+          {
+            _key: txHash,
+            _ref: txHash,
+            _type: "reference",
+          },
+        ]
+      )
+      .commit(); // send and update sanity DB with new data
+
+    return;
   };
 
   return (

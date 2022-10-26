@@ -6,6 +6,7 @@
     "start": "PORT=3001 next start"
   },
   "dependencies": {
+    "@sanity/client": "^3.4.1",
     "ethers": "^5.7.2",
     "next": "latest",
     "react": "18.1.0",
