@@ -7,7 +7,7 @@ import sanityClient from "@sanity/client";
 
 export const client = sanityClient({
   projectId: "z69tpipz",
-  dataset: "product",
+  dataset: "production",
   apiVersion: "v1",
   token:
     "sksDVKVevDp1tHAKRvrVhip6EOpdouE6HWLVG5lpbJyTlvbpBoquvPnGB9EoP6rjH4EWIhfQrPQITCn6BgWmJdid7eXzMtbDCfMWyDcA7XT7cGvYAPhpMvRa8DhUZGO4Ey3lMI2tIvtNX4TKZxCfNss7WdaZEue406yGCcGbqLhoIdBnLJ4K",

@@ -43,12 +43,16 @@ const getEthereumContract = () => {
  * URL: https://dev.to/vvo/how-to-solve-window-is-not-defined-errors-in-react-and-next-js-5f97
  */
 
+export type HanldeInputType = React.InputHTMLAttributes<any> & {
+  target: { value: string };
+};
 export type Eth = Window["ethereum"] | undefined;
 export type TransactionContext = {
+  isLoading: boolean;
   currentAccount: string | null;
   connectWallet: (eth?: Eth) => Promise<any>;
   sendTransaction: (eht?: Eth, connectedAccount?: string) => Promise<any>;
-  handleFormChange: (e: React.InputHTMLAttributes<any>, name: string) => void;
+  handleFormChange: (e: HanldeInputType, name: string) => void;
   formData: {
     addressTo: string;
     amount: string;
@@ -56,6 +60,7 @@ export type TransactionContext = {
 };
 
 const initContext: TransactionContext = {
+  isLoading: false,
   currentAccount: null,
   connectWallet: () => new Promise(() => {}),
   sendTransaction: () => new Promise(() => {}),
@@ -89,6 +94,26 @@ export const TransactionProvider = ({
       checkIfWalletIsConnected();
     }
   }, []);
+
+  // Create user profile in Sanity if not exists
+  useEffect(() => {
+    if (!currentAccount) {
+      return;
+    }
+
+    // IIF
+    (async () => {
+      const userDoc = {
+        _id: currentAccount,
+        _type: "users",
+        userName: "Unnamed",
+        walletAddress: currentAccount,
+      };
+
+      await client.createIfNotExists(userDoc);
+      //const res = await client.createOrReplace(userDoc);
+    })();
+  }, [currentAccount]);
 
   const connectWallet = async (metamask = eth) => {
     try {
@@ -189,10 +214,7 @@ export const TransactionProvider = ({
     }
   };
 
-  const handleFormChange = (
-    e: React.SyntheticEvent & { target: { value: string } },
-    name: string
-  ) => {
+  const handleFormChange = (e: HanldeInputType, name: string) => {
     setFormData((prevState) => ({
       ...prevState,
       [name]: e?.target?.value,
@@ -255,6 +277,7 @@ export const TransactionProvider = ({
   return (
     <TransactionContext.Provider
       value={{
+        isLoading,
         formData,
         currentAccount,
         connectWallet,
