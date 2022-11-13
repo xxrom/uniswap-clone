@@ -49,17 +49,18 @@ export const TransactionHistory = () => {
     })();
   }, [isLoading, currentAccount]);
 
-  const onHide = useCallback(() => setIsHidden(true), []);
+  const onToggleHistory = useCallback(() => setIsHidden((state) => !state), []);
 
   const isContentVisibale = !isHidden && transactionHistory?.length > 0;
 
   return (
     <div className={style.wrapper}>
-      {isContentVisibale && (
-        <div>
-          <span className={style.closeBtn} onClick={onHide}>
-            Close
-          </span>
+      <div>
+        <span className={style.closeBtn} onClick={onToggleHistory}>
+          {isContentVisibale ? "Close" : "Open History"}
+        </span>
+
+        {isContentVisibale && (
           <div className={style.content}>
             {transactionHistory.map(
               ({ _id, amount, toAddress, timestamp, txHash }) => (
@@ -85,8 +86,8 @@ export const TransactionHistory = () => {
               )
             )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

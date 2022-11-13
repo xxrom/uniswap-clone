@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { Header, Main, TransactionHistory } from "../components";
 
 const style = {
-  wrapper: `h-screen max-h-screen h-min-screen w-screen bg-[#2d242f] text-white select-none flex flex-col justify-between`,
+  wrapper: `h-screen max-h-screen h-min-screen w-screen bg-slate-800 text-white select-none flex flex-col justify-between`,
 };
 
 const Home: NextPage = () => {
@@ -11,7 +11,7 @@ const Home: NextPage = () => {
       <Header />
       <Main />
       <TransactionHistory />
-      <div>footer</div>
+      <div />
     </div>
   );
 };

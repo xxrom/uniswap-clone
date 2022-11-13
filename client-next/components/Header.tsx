@@ -16,6 +16,7 @@ const style = {
   navItemsContainer: `flex bg-[#191B1F] rounded-3xl`,
   navItem: `px-4 py-2 m-1 flex items-center fext-lg font-semibold cursrot-pointer rounded-3xl`,
   activeNavItem: ` text-amber-400 bg-[#20242A]`,
+  accountHash: "text-amber-400",
   buttonsContainer: `flex justify-end items-center`,
 };
 
@@ -85,6 +86,7 @@ export const Header = memo(({}: HeaderProps) => {
 
         {isConnected ? (
           <IconButton
+            className={style.accountHash}
             title={`${currentAccount?.slice(0, 7)}...${currentAccount?.slice(
               35
             )}`}

@@ -3,9 +3,9 @@ import { IconType } from "react-icons";
 const style = {
   buttonIconContainer: "flex items-center",
   buttonTitleContainer: "m-2",
-  button: `flex items-center bg-[#191B1F] rounded-2xl mx-2`,
+  button: `flex cursor-pointer items-center bg-[#191B1F] rounded-2xl mx-2`,
   buttonPadding: `p-2`,
-  accent: `text-blue-500 font-bold border border-[#163256] bg-[#172A42] rounded-2xl h-full`,
+  accent: `text-black font-bold border border-[#163256] bg-amber-400 rounded-2xl h-full`,
 };
 
 export interface IIconButton {
@@ -26,6 +26,7 @@ export interface IIconButton {
    */
   type?: "accent";
   onClick?: (obj: any) => void;
+  className?: string;
 }
 
 export const IconButton = ({
@@ -34,12 +35,13 @@ export const IconButton = ({
   IconEnd,
   type,
   onClick,
+  className = "",
 }: IIconButton) => (
   <div
     onClick={onClick}
     className={`${style.button} ${type === "accent" && style.accent} ${
       style.buttonPadding
-    }`}
+    } ${className}`}
   >
     <div className={`${style.buttonIconContainer}`}>
       {IconStart && <IconStart />}
