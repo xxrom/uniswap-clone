@@ -52,7 +52,7 @@ export type TransactionContext = {
   currentAccount: string | null;
   connectWallet: (eth?: Eth) => Promise<any>;
   sendTransaction: (eht?: Eth, connectedAccount?: string) => Promise<any>;
-  handleFormChange: (e: HanldeInputType, name: string) => void;
+  handleFormChange: (e: HanldeInputType, name: string, regExp?: RegExp) => void;
   formData: {
     addressTo: string;
     amount: string;
@@ -67,7 +67,7 @@ const initContext: TransactionContext = {
   handleFormChange: () => {},
   formData: {
     addressTo: "",
-    amount: "",
+    amount: "0.0",
   },
 };
 
@@ -214,7 +214,17 @@ export const TransactionProvider = ({
     }
   };
 
-  const handleFormChange = (e: HanldeInputType, name: string) => {
+  const handleFormChange = (
+    e: HanldeInputType,
+    name: string,
+    regExp?: RegExp
+  ) => {
+    const value = e?.target?.value.trim();
+
+    if (regExp && !new RegExp(regExp).test(value)) {
+      return;
+    }
+
     setFormData((prevState) => ({
       ...prevState,
       [name]: e?.target?.value.trim(),

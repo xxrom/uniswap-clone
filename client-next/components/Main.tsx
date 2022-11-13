@@ -30,13 +30,16 @@ export const Main = memo(({}: MainProps) => {
     useTransaction();
 
   const onChangeAmount = useCallback(
-    (e: InputChangeEvent) => handleFormChange(e, "amount"),
+    (e: InputChangeEvent) =>
+      handleFormChange(e, "amount", /^[0-9]*[.,][0-9]*$/g),
     [handleFormChange]
   );
   const onChangeAddress = useCallback(
-    (e: InputChangeEvent) => handleFormChange(e, "addressTo"),
+    (e: InputChangeEvent) =>
+      handleFormChange(e, "addressTo", /^[0-9a-zA-Z]*$/g),
     [handleFormChange]
   );
+
   const onSubmit = useCallback(
     async (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       const { addressTo, amount } = formData;
@@ -72,8 +75,9 @@ export const Main = memo(({}: MainProps) => {
           <input
             type="text"
             className={style.transferPropInput}
-            placeholder="0.0"
-            pattern="^[0-9]*[.,]?[0-9]*$"
+            value={formData?.["amount"]}
+            placeholder={formData?.["amount"]}
+            pattern="[0-9]*[.,]?[0-9]*"
             onChange={onChangeAmount}
           />
           <div className={style.currencySelector}>
@@ -90,7 +94,9 @@ export const Main = memo(({}: MainProps) => {
           <input
             type="text"
             className={style.transferPropInput}
+            value={formData?.["addressTo"]}
             placeholder="0x..."
+            pattern="^[0-9a-zA-Z]*$"
             onChange={onChangeAddress}
           />
         </div>
