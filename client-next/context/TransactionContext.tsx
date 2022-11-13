@@ -217,7 +217,7 @@ export const TransactionProvider = ({
   const handleFormChange = (e: HanldeInputType, name: string) => {
     setFormData((prevState) => ({
       ...prevState,
-      [name]: e?.target?.value,
+      [name]: e?.target?.value.trim(),
     }));
   };
 

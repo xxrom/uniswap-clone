@@ -14,7 +14,7 @@ import { useTransaction } from "../context/TransactionContext";
 export interface MainProps {}
 
 const style = {
-  wrapper: `w-screen flex items-center justify-center mt-14`,
+  wrapper: `w-screen flex items-center justify-center mt-2`,
   content: `bg-[#19181F] w-[40rem] rounded-2xl p-4`,
   formHeader: `px-2 flex items-center justify-center justify-between font-semibold text-xl`,
   transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-6 text-3xl border border-[#20242A] hover:border-[#20442A] flex`,
@@ -32,13 +32,8 @@ const style = {
 export type InputChangeEvent = ChangeEvent<HTMLInputElement>;
 
 export const Main = memo(({}: MainProps) => {
-  const {
-    isLoading,
-    currentAccount,
-    formData,
-    handleFormChange,
-    sendTransaction,
-  } = useTransaction();
+  const { isLoading, formData, handleFormChange, sendTransaction } =
+    useTransaction();
 
   const onChangeAmount = useCallback(
     (e: InputChangeEvent) => handleFormChange(e, "amount"),
@@ -104,7 +99,6 @@ export const Main = memo(({}: MainProps) => {
             placeholder="0x..."
             onChange={onChangeAddress}
           />
-          {/*<div className={style.currencySelector}></div>*/}
         </div>
         <div onClick={onSubmit} className={style.confirmButton}>
           Confirm
