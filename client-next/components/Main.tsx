@@ -1,10 +1,4 @@
-import React, {
-  ChangeEvent,
-  memo,
-  MouseEventHandler,
-  useCallback,
-  useState,
-} from "react";
+import React, { ChangeEvent, memo, useCallback } from "react";
 
 import { AiOutlineArrowDown } from "react-icons/ai";
 import { RiSettings3Fill } from "react-icons/ri";
@@ -24,7 +18,7 @@ const style = {
   currencySelectorIcon: `flex items-center`,
   currencySelectorTicker: `mx-2`,
   currencySelectorArrow: `text-lg`,
-  confirmButton: `bg-[#2172e5] my-2 rounded-2xl py-6 px-8 text-2xl font-bold flex items-center justify-center cursor-pointer`,
+  confirmButton: `bg-sky-500 my-2 rounded-2xl py-6 px-8 text-2xl font-bold flex w-full items-center justify-center cursor-pointer hover:bg-sky-600 active:bg-sky-800`,
   inputControls: `flex `,
   loadingBadge: `flex min-w-28 justify-center bg-amber-400 rounded-xl ml-4 px-4 text-rose-800`,
 };
@@ -44,7 +38,7 @@ export const Main = memo(({}: MainProps) => {
     [handleFormChange]
   );
   const onSubmit = useCallback(
-    async (_e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    async (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       const { addressTo, amount } = formData;
 
       // Disabling default thing (a form submission is to refresh the page)
@@ -100,9 +94,13 @@ export const Main = memo(({}: MainProps) => {
             onChange={onChangeAddress}
           />
         </div>
-        <div onClick={onSubmit} className={style.confirmButton}>
-          Confirm
-        </div>
+        <button
+          disabled={isLoading}
+          onClick={onSubmit}
+          className={style.confirmButton}
+        >
+          {isLoading ? "Loading..." : "Confirm"}
+        </button>
       </div>
     </div>
   );

@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useState, useTransition } from "react";
+
 import { useTransaction } from "../context/TransactionContext";
+import { day } from "../lib/dayjs";
 import { client } from "../lib/sanityClient";
 
 const style = {
   wrapper: `absolute z-10 max-h-20 text-white select-none flex items-end justify-end right-2 bottom-2`,
-  content: `rounded-lg p-2 bg-sky-800`,
+  content: `rounded-lg p-2 bg-sky-800 overflow-scroll h-[20rem] max-h-[60vh]`,
   closeBtn: `inline-flex px-4 py-2 rounded-lg mb-2 cursor-pointer bg-amber-400 text-black font-bold`,
-  txHistoryItem: `bg-[#191a1e] rounded-lg px-4 py-4 my-2 flex items-center justify-end`,
-  amount: `text-sky-700`,
-  txDetails: `flex items-center`,
-  toAddress: `text-amber-400 mx-2`,
+  txHistoryItem: `bg-slate-900 rounded-lg px-4 py-4 my-2`,
+  amount: `text-sky-400 font-bold`,
+  txDetails: `flex flex-1 justify-between`,
+  index: `mr-2`,
+  toAddress: `mx-2 text-amber-400`,
   txTimestamp: `ml-2`,
   etherscanLink: `ml-4 flex items-center text-sky-700`,
 };
@@ -33,16 +36,18 @@ export const TransactionHistory = () => {
   useEffect(() => {
     (async () => {
       if (!isLoading && currentAccount) {
+        // sanity doc: https://www.sanity.io/docs/query-cheat-sheet
         const query = `
             *[_type=="users" && _id=="${currentAccount}"] {
-              "transactionList": transactions[]->{amount, toAddress, timestamp, txHash}|order(timestamp, desc)
+              "transactionList": transactions[]->{amount, toAddress, timestamp, txHash}
             }
           `;
 
         const clientRes = await client.fetch(query);
+        console.log(clientRes);
 
         // get transactionList for currentAccount
-        setTransactionHistory(clientRes[0].transactionList);
+        setTransactionHistory(clientRes[0].transactionList.reverse());
 
         setIsHidden(false);
       }
@@ -62,24 +67,25 @@ export const TransactionHistory = () => {
 
         {isContentVisibale && (
           <div className={style.content}>
-            {transactionHistory.map(
-              ({ _id, amount, toAddress, timestamp, txHash }) => (
+            {transactionHistory?.map(
+              ({ _id, amount, toAddress, timestamp, txHash }, index) => (
                 <div className={style.txHistoryItem} key={_id}>
                   <div className={style.txDetails}>
-                    <span className={style.amount}>{amount}</span>
+                    <span className={style.index}>{`№ ${index + 1}: `}</span>
+                    <span className={style.amount}>{`amount: ${amount}`}</span>
                     <span className={style.toAddress}>
-                      {`${toAddress.substring(0, 6)}...`}
+                      {`to: ${toAddress.substring(0, 7)}...`}
                     </span>
                     <span className={style.txTimestamp}>
-                      {new Date(timestamp).toLocaleString()}
+                      {day(timestamp).fromNow()}
                     </span>
                     <a
-                      href={`https://rinkeby.etherscan.io/tx/${txHash}`}
+                      href={`https://goerli.etherscan.io/tx/${txHash}`}
                       target="_blank"
                       rel="noreferrer"
                       className={style.etherscanLink}
                     >
-                      {`${txHash.substring(0, 6)}...`}
+                      {`Link to goerli: ${txHash.substring(0, 6)}...`}
                     </a>
                   </div>
                 </div>
