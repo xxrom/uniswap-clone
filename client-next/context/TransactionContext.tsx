@@ -48,7 +48,10 @@ export type HanldeInputType = React.InputHTMLAttributes<any> & {
 };
 export type Eth = Window["ethereum"] | undefined;
 export type TransactionContext = {
+  isLoggedIn: boolean;
   isLoading: boolean;
+  isCorrectNetwork: boolean;
+  information: string;
   currentAccount: string | null;
   connectWallet: (eth?: Eth) => Promise<any>;
   sendTransaction: (eht?: Eth, connectedAccount?: string) => Promise<any>;
@@ -60,7 +63,10 @@ export type TransactionContext = {
 };
 
 const initContext: TransactionContext = {
+  isLoggedIn: false,
   isLoading: false,
+  isCorrectNetwork: false,
+  information: "",
   currentAccount: null,
   connectWallet: () => new Promise(() => {}),
   sendTransaction: () => new Promise(() => {}),
@@ -78,6 +84,9 @@ export const TransactionProvider = ({
 }: {
   children: ReactElement;
 }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isCorrectNetwork, setIsCorrectNetwork] = useState(false);
+  const [information, setInformation] = useState("...");
   const [currentAccount, setCurrentAccount] =
     useState<TransactionContext["currentAccount"]>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,18 +97,19 @@ export const TransactionProvider = ({
   console.log("Context data", formData);
 
   useEffect(() => {
-    console.log("useEffect", eth);
-
-    if (typeof window === "object") {
-      checkIfWalletIsConnected();
-    }
+    console.log("try connect", eth);
+    checkIfWalletIsConnected();
   }, []);
 
   // Create user profile in Sanity if not exists
   useEffect(() => {
+    console.log("currentAccount useEffect : ", currentAccount);
     if (!currentAccount) {
+      setIsLoggedIn(false);
       return;
     }
+
+    setIsLoggedIn(true);
 
     // IIF
     (async () => {
@@ -115,24 +125,58 @@ export const TransactionProvider = ({
     })();
   }, [currentAccount]);
 
+  const validateNetwork = async (metamask = eth) => {
+    let chainId = await metamask?.request({ method: "eth_chainId" });
+
+    console.log(`Connected to chain: ${chainId}`);
+
+    const goerlyChainId = "0x5";
+
+    if (chainId !== goerlyChainId) {
+      const message = "You are not connected to the 'Goerli' test network!";
+      console.log(message);
+      setInformation(message);
+      //alert(message);
+      setIsCorrectNetwork(false);
+
+      return false;
+    }
+
+    setIsCorrectNetwork(true);
+    return true;
+  };
+
   const connectWallet = async (metamask = eth) => {
     try {
       if (!metamask) {
+        setInformation("Please install MetaMask.");
         return alert("Please install metamask (connectWallet)");
+      }
+
+      let chainId = await metamask?.request({ method: "eth_chainId" });
+
+      console.log(`Connected to chain: ${chainId}`);
+
+      const isNetworkValid = await validateNetwork();
+      if (!isNetworkValid) {
+        return;
       }
 
       const accounts = await metamask.request({
         method: "eth_requestAccounts",
       });
-      console.log("accoutns", accounts);
+      console.log("accounts", accounts);
+
       setCurrentAccount(accounts[0]);
     } catch (err: any) {
       if (err?.code === 4001) {
         // EIP-1193 userRejectedRequest error
         // If this happens, the user rejected the connection request.
         console.log("Please connect to MetaMask.");
+        setInformation("Please connect to MetaMask.");
       } else {
         console.error(err);
+        setInformation("Error...");
         throw new Error("No ethereum object (eth_requestAccounts)");
       }
     }
@@ -145,18 +189,28 @@ export const TransactionProvider = ({
          * If user didn't have metasmask, then he doesn't have
          * window.ethereum, then he has to install plugin MetaMask
          */
-        return alert("Please install metamask (checkIfWalletIsConnected)");
+        setInformation("Please install MetaMask.");
+        return; // alert("Please install metamask (checkIfWalletIsConnected)");
       }
 
-      const accounts = await metamask.request({ method: "eth_accounts" });
+      const isNetworkValid = await validateNetwork();
+      if (!isNetworkValid) {
+        return;
+      }
 
-      if (accounts?.length) {
-        setCurrentAccount(accounts[0]);
+      const accounts = await metamask?.request({
+        method: "eth_accounts",
+      });
+
+      // Using first one that we found (we could find more =)
+      if (accounts?.length > 0) {
+        console.log(`Found account[0]: ${accounts[0]}`);
         console.log("Wallet is already connected!");
+        setCurrentAccount(accounts[0]);
       }
     } catch (err) {
       console.error(err);
-      throw new Error("No ethereum object (eth_accounts)");
+      //throw new Error("No ethereum object (eth_accounts)");
     }
   };
 
@@ -166,6 +220,7 @@ export const TransactionProvider = ({
   ) => {
     try {
       if (!metamask) {
+        setInformation("Please install to MetaMask.");
         return alert("Please install metamask (checkIfWalletIsConnected)");
       }
 
@@ -287,6 +342,9 @@ export const TransactionProvider = ({
   return (
     <TransactionContext.Provider
       value={{
+        information,
+        isLoggedIn,
+        isCorrectNetwork,
         isLoading,
         formData,
         currentAccount,

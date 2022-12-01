@@ -1,9 +1,9 @@
 import { IconType } from "react-icons";
 
 const style = {
-  buttonIconContainer: "flex items-center",
+  buttonIconContainer: "flex items-center ",
   buttonTitleContainer: "m-2",
-  button: `flex cursor-pointer items-center bg-[#191B1F] rounded-2xl mx-2`,
+  button: `flex max-h-16 cursor-pointer items-center bg-[#191B1F] rounded-2xl mx-2`,
   buttonPadding: `p-2`,
   accent: `text-black font-bold border border-[#163256] bg-amber-400 rounded-2xl h-full`,
 };

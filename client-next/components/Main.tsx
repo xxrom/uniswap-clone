@@ -9,17 +9,17 @@ export interface MainProps {}
 
 const style = {
   wrapper: `w-screen flex items-center justify-center mt-2`,
-  content: `bg-[#19181F] w-[40rem] rounded-2xl p-4`,
+  content: `bg-[#19181F] w-[40rem] rounded-2xl p-4 sm:p-4 m-4 sm:p-4`,
   formHeader: `px-2 flex items-center justify-center justify-between font-semibold text-xl`,
-  transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-6 text-3xl border border-[#20242A] hover:border-[#20442A] flex`,
-  transferPropInput: `bg-transparent placeholder:text-[#B2B9D2] outline-none mb-0 w-full text-2xl`,
+  transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-4 sm:p-6 text-3xl border border-[#20242A] hover:border-[#20442A] flex`,
+  transferPropInput: `bg-transparent placeholder:text-[#B2B9D2] outline-none mb-0 w-full text-lg md:text-2xl`,
   currencySelector: `flex w-28`,
-  currencySelectorContent: `w-full h-min flex justify-between items-center bg-[#2d2f36] hover:bg-[#41444f] rounded-2xl text-xl font-medium cursor-pointer p-2 mt-[-0.2rem]`,
+  currencySelectorContent: `w-full h-min flex justify-between items-center bg-[#2d2f36] hover:bg-[#41444f] rounded-2xl text-base sm:text-xl font-medium cursor-pointer p-2 mt-[-0.2rem]`,
   currencySelectorIcon: `flex items-center`,
   currencySelectorTicker: `mx-2`,
   currencySelectorArrow: `text-lg`,
-  confirmButton: `bg-sky-500 my-2 rounded-2xl py-6 px-8 text-2xl font-bold flex w-full items-center justify-center cursor-pointer hover:bg-sky-600 active:bg-sky-800`,
-  inputControls: `flex `,
+  confirmButton: `bg-sky-500 my-2 rounded-2xl py-4 sm:py-6 px-4 sm:px-8 text-xl sm:text-2xl font-bold flex w-full items-center justify-center cursor-pointer hover:bg-sky-600 active:bg-sky-800`,
+  inputControls: `flex text-base sm:text-xl`,
   loadingBadge: `flex min-w-28 justify-center bg-amber-400 rounded-xl ml-4 px-4 text-rose-800`,
 };
 

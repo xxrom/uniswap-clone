@@ -5,10 +5,10 @@ import { day } from "../lib/dayjs";
 import { client } from "../lib/sanityClient";
 
 const style = {
-  wrapper: `absolute z-10 max-h-20 text-white select-none flex items-end justify-end right-2 bottom-2`,
+  wrapper: `absolute z-10 max-h-20 text-white select-none flex items-end justify-end right-2 bottom-2 pl-2`,
   content: `rounded-lg p-2 bg-sky-800 overflow-scroll h-[20rem] max-h-[60vh]`,
   closeBtn: `inline-flex px-4 py-2 rounded-lg mb-2 cursor-pointer bg-amber-400 text-black font-bold`,
-  txHistoryItem: `bg-slate-900 rounded-lg px-4 py-4 my-2`,
+  txHistoryItem: `bg-slate-900 rounded-lg px-4 py-2 sm:py-4 my-1 sm:my-2 text-sm`,
   amount: `text-sky-400 font-bold`,
   txDetails: `flex flex-1 justify-between`,
   index: `mr-2`,
@@ -28,7 +28,7 @@ export type TransactionList = Array<TransactionItem>;
 
 export const TransactionHistory = () => {
   const { isLoading, currentAccount } = useTransaction();
-  const [isHidden, setIsHidden] = useState(false);
+  const [isHidden, setIsHidden] = useState(true);
   const [transactionHistory, setTransactionHistory] = useState<TransactionList>(
     []
   );
@@ -48,8 +48,6 @@ export const TransactionHistory = () => {
 
         // get transactionList for currentAccount
         setTransactionHistory(clientRes[0].transactionList.reverse());
-
-        setIsHidden(false);
       }
     })();
   }, [isLoading, currentAccount]);
@@ -69,7 +67,7 @@ export const TransactionHistory = () => {
           <div className={style.content}>
             {transactionHistory?.map(
               ({ _id, amount, toAddress, timestamp, txHash }, index) => (
-                <div className={style.txHistoryItem} key={_id}>
+                <div className={style.txHistoryItem} key={`${_id}${timestamp}`}>
                   <div className={style.txDetails}>
                     <span className={style.index}>{`№ ${index + 1}: `}</span>
                     <span className={style.amount}>{`amount: ${amount}`}</span>

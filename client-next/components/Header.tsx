@@ -10,11 +10,11 @@ import { useTransaction } from "../context/TransactionContext";
 export interface HeaderProps {}
 
 const style = {
-  wrapper: `p-4 w-screen flex flex-wrap justify-between items-center`,
-  headerLogo: `flex w-1/8 items-center justify-start`,
-  nav: `flex-1 flex justify-center items-center`,
+  wrapper: `py-4 px-2 sm:p-4 w-screen flex flex-col md:flex-row flex-wrap justify-between items-center`,
+  headerLogo: `flex w-1/8 items-center justify-start pb-4 md:pb-0`,
+  nav: `flex-1 flex justify-center items-center pb-4 md:pb-0`,
   navItemsContainer: `flex bg-[#191B1F] rounded-3xl`,
-  navItem: `px-4 py-2 m-1 flex items-center fext-lg font-semibold cursrot-pointer rounded-3xl`,
+  navItem: `px-4 py-2 m-1 flex items-center text-base sm:text-2xl font-semibold cursrot-pointer rounded-3xl`,
   activeNavItem: ` text-amber-400 bg-[#20242A]`,
   accountHash: "text-amber-400",
   buttonsContainer: `flex justify-end items-center`,
@@ -83,7 +83,6 @@ export const Header = memo(({}: HeaderProps) => {
           IconStart={DiAptana}
           IconEnd={AiOutlineArrowDown}
         />
-
         {isConnected ? (
           <IconButton
             className={style.accountHash}
@@ -99,7 +98,7 @@ export const Header = memo(({}: HeaderProps) => {
           />
         )}
 
-        <IconButton IconStart={HiOutlineDotsVertical} />
+        {/*<IconButton IconStart={HiOutlineDotsVertical} />*/}
       </div>
     </div>
   );
